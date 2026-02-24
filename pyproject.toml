@@ -1,0 +1,12 @@
+[project]
+name = "inference-gateway-fastapi"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.133.0",
+    "loguru>=0.7.3",
+    "pydantic-settings>=2.13.1",
+    "uvicorn[standard]>=0.35.0",
+]

@@ -1,0 +1,47 @@
+Inference Gateway Objective - Status
+
+DONE
+- [x] FastAPI server boots and serves HTTP.
+- [x] Health endpoint exists: GET /healthz.
+- [x] Request ID middleware exists:
+  - reads X-Request-ID if present
+  - generates UUID if missing
+  - stores request.state.request_id
+  - sets response header X-Request-ID
+- [x] Request-id handling standardized to X-Request-ID only (by design).
+- [x] Chat request schema exists with OpenAI-like fields:
+  - model
+  - messages[{role, content}]
+  - stream (bool)
+- [x] Route path exists as POST /v1/chat/completions.
+
+PARTIALLY DONE
+- [~] Settings class exists and is used in main app.
+- [~] `backend_url` is configured in settings, but forwarding logic is not implemented.
+
+TODO (MUST HAVE)
+- [ ] Make server port configurable by env (PORT) with default 8080.
+- [ ] In handler, extract last user message content as prompt.
+- [ ] Add backend forwarding flow:
+  - if BACKEND_URL set -> POST same request shape to backend
+  - return backend response (or normalized response)
+- [ ] Add fallback echo flow when BACKEND_URL not set:
+  - reply content: "Echo: <prompt>"
+- [ ] Return required non-stream JSON shape:
+  - id (request-id)
+  - choices: [{ "message": { "role": "assistant", "content": "<reply>" }, "finish_reason": "stop" }]
+  - usage: { "prompt_tokens", "completion_tokens", "total_tokens" } (approximate is OK)
+
+OPTIONAL / STRETCH
+- [ ] stream=true support with SSE:
+  - proxy backend SSE if backend supports it
+  - else emit one SSE chunk with full reply then data: [DONE]
+- [ ] Optional GET /v1/models endpoint.
+
+CLEANUP / TECH-DEBT
+- [ ] Remove unused imports in `gateway/main.py` (e.g. Depends/os/InputRequest/verify_token if unused).
+- [ ] Confirm env file path strategy (`/gateway/envs/.env`) works in container/runtime.
+- [ ] Add basic tests for:
+  - request-id middleware behavior
+  - /v1/chat/completions non-stream response shape
+  - echo fallback path
