@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file="/gateway/envs/.env", env_file_encoding="utf-8")
     root_path: str = ""
     api_title: str = "Inference Gateway"
-    backend_url: str = "http://localhost:8000"
+    backend_url: str = "http://0.0.0.0:8000"
     request_id_header: str = "X-Request-ID"
 
 @lru_cache

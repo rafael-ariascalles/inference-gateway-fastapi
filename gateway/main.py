@@ -28,13 +28,11 @@ app.add_middleware(
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
     # HeaderDict is case-insensitive, so x-request-id / X-Request-Id both work
-    request_id = request.headers.get(REQUEST_ID_HEADER) or str(uuid.uuid4().hex)
+    request_id = request.headers.get(REQUEST_ID_HEADER,str(uuid.uuid4().hex))
     request.state.request_id = request_id
     response = await call_next(request)
     response.headers[REQUEST_ID_HEADER] = request_id
     return response
-
-app.include_router(app_router)
 
 @app.get("/healthz", tags=["Checks"])
 async def healthz():
@@ -43,3 +41,7 @@ async def healthz():
 @app.get("/", tags=["Checks"])
 async def ping():
     return {"status": "available"}
+
+
+
+app.include_router(app_router,tags=["Chats"])
