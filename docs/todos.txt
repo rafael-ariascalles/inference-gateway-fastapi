@@ -14,33 +14,29 @@ DONE
   - messages[{role, content}]
   - stream (bool)
 - [x] Route path exists as POST /v1/chat/completions.
-
-PARTIALLY DONE
-- [~] Settings class exists and is used in main app.
-- [~] `backend_url` is configured in settings, but forwarding logic is not implemented.
-
-TODO (MUST HAVE)
-- [ ] Make server port configurable by env (PORT) with default 8080.
-- [ ] In handler, extract last user message content as prompt.
-- [ ] Add backend forwarding flow:
-  - if BACKEND_URL set -> POST same request shape to backend
-  - return backend response (or normalized response)
-- [ ] Add fallback echo flow when BACKEND_URL not set:
-  - reply content: "Echo: <prompt>"
-- [ ] Return required non-stream JSON shape:
-  - id (request-id)
+- [x] Settings class exists and is used in main app (root_path, api_title, request_id_header, backend_url, port).
+- [x] `backend_url` is configured in settings and forwarding is implemented via LlamaCppBackend.
+- [x] In handler, extract last user message content as prompt (both EchoBackend and LlamaCppBackend use messages[-1].content).
+- [x] Backend forwarding flow via LlamaCppBackend: POSTs to backend_url/v1/chat/completions.
+- [x] Fallback echo flow: EchoBackend replies with "Echo: <prompt>" and is the factory default.
+- [x] Non-stream JSON response shape returned:
+  - id (uuid)
   - choices: [{ "message": { "role": "assistant", "content": "<reply>" }, "finish_reason": "stop" }]
-  - usage: { "prompt_tokens", "completion_tokens", "total_tokens" } (approximate is OK)
+  - usage: { "prompt_tokens", "completion_tokens", "total_tokens" } (hardcoded 0s for now)
+- [x] Server port configurable by env (PORT) with default 8000.
+  (Settings.port, main.py __main__ block, Dockerfile CMD uses python -m gateway.main, Makefile/env files pass PORT.)
+- [x] `gateway.security` module exists with `verify_token` and `Depends` (imported in main.py for future use).
 
 OPTIONAL / STRETCH
 - [ ] stream=true support with SSE:
   - proxy backend SSE if backend supports it
   - else emit one SSE chunk with full reply then data: [DONE]
+  (Route dispatches to stream_chat but it returns a Response object, not actual SSE events.)
 - [ ] Optional GET /v1/models endpoint.
 
 CLEANUP / TECH-DEBT
-- [ ] Remove unused imports in `gateway/main.py` (e.g. Depends/os/InputRequest/verify_token if unused).
 - [ ] Confirm env file path strategy (`/gateway/envs/.env`) works in container/runtime.
+  (Config hardcodes /gateway/envs/.env but Dockerfile WORKDIR is /app; no .env is copied there. Runtime relies on --env-file flag instead.)
 - [ ] Add basic tests for:
   - request-id middleware behavior
   - /v1/chat/completions non-stream response shape

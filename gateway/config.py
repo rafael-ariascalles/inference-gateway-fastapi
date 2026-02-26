@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     api_title: str = "Inference Gateway"
     backend_url: str = "http://0.0.0.0:8000"
     request_id_header: str = "X-Request-ID"
+    port: int = 8000
 
 @lru_cache
 def get_settings():

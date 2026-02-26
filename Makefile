@@ -1,7 +1,11 @@
-.PHONY: build run push-docker-hub build-push-image
+-include .env
+export
+
+.PHONY: build run copy-env
 
 IMAGE_NAME ?= microservice
 TAG ?= latest
+PORT ?= 8000
 DOCKERHUB_USERNAME ?= USER
 REGISTRY ?= $(DOCKERHUB_USERNAME)
 
@@ -9,9 +13,7 @@ build:
 	docker build -t $(IMAGE_NAME):$(TAG) .
 
 copy-env:
-	if [ ! -f .env ]; then
-		cp .env.example .env
-	fi
+	@if [ ! -f .env ]; then cp .env.example .env; fi;
 
 run: build copy-env
-	docker run -it --rm -p 8000:8000 --env-file .env --name services $(IMAGE_NAME):$(TAG)
+	docker run -it --rm -p $(PORT):$(PORT) --env-file .env --name services $(IMAGE_NAME):$(TAG)

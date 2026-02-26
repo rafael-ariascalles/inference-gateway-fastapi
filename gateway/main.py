@@ -1,7 +1,5 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-import os
-from gateway.schema import InputRequest
 from gateway.security import verify_token
 from gateway.routes import app_router
 import uuid
@@ -45,3 +43,8 @@ async def ping():
 
 
 app.include_router(app_router,tags=["Chats"])
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("gateway.main:app", host="0.0.0.0", port=settings.port)

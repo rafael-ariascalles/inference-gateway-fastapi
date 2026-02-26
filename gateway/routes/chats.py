@@ -1,13 +1,6 @@
 from fastapi import APIRouter
-from fastapi import Depends
 from gateway.schema import InputRequest
-from gateway.backend import LlamaCppBackend
 from gateway.config import get_settings
-from pydantic import BaseModel
-from typing import List
-import uuid
-
-from gateway.schema import Message
 from gateway.backend.factory import get_backend
 from gateway.backend import Response
 
