@@ -1,12 +1,10 @@
 from gateway.backend import LlamaCppBackend, EchoBackend, BackendClient
-from loguru import logger
+from gateway.schema import ModelName
 
 
-def get_backend(backend_name: str = "echo") -> BackendClient:
-    if backend_name == "llama_cpp":
-        return LlamaCppBackend()
-    elif backend_name == "echo":
-        return EchoBackend()
-    else:
-        logger.warning(f"Invalid backend name: {backend_name}")
-        return EchoBackend()
+def get_backend(backend_name: ModelName) -> BackendClient:
+    backends = {
+        ModelName.llama_cpp: LlamaCppBackend,
+        ModelName.echo: EchoBackend,
+    }
+    return backends[backend_name]()

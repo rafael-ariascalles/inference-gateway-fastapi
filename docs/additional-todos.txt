@@ -1,0 +1,56 @@
+Additional TODOs
+
+1. Request validation (custom error responses)
+   - [x] Add custom exception handler for RequestValidationError in main.py.
+     Returns 400 with {"detail": {"errors": [{"field": "<name>", "message": "<msg>"}]}}.
+     Surfaces all validation errors, not just the first.
+   - [x] Make `stream` optional with default False in InputRequest schema.
+   - [x] Add `max_tokens` field to InputRequest with range validation (ge=1, le=50_000).
+   - [x] Numeric constraints use ge/le correctly (max_tokens and temperature).
+   - [x] Model name validated via ModelName enum (rejects unknown models at schema level).
+
+2. Auth and policy hooks
+   - [x] Wire `error_verify_token` into the chat router via Depends.
+     Applied to app_router in main.py; /healthz and / remain open.
+   - [x] Error shape aligned: {"detail": {"errors": [{"message": "unauthorized"}]}}.
+   - [~] Rate limiting deferred — will be handled at Kubernetes/infra level (ingress, service mesh)
+     rather than in-process, to avoid needing a shared store across replicas.
+
+3. Error normalization and resilience
+   - [x] Backend timeout: 504, {"detail": {"errors": [{"message": "gateway_timeout"}]}}.
+   - [x] Backend 5xx or invalid response: 502, {"detail": {"errors": [{"message": "backend_error"}]}}.
+   - [x] Connection error (refused, DNS, etc.): 502, {"detail": {"errors": [{"message": "backend_unavailable"}]}}.
+   - [x] Never return 200 with echo when the backend actually failed.
+   Implemented in BackendClient._call_backend() in generic.py — catches httpx.ConnectError,
+   httpx.TimeoutException, httpx.HTTPStatusError and raises HTTPException with mapped codes.
+   Applies to all backend subclasses (LlamaCpp, Echo, etc.) uniformly.
+   - [ ] Optional: retry once or try next backend if multiple are configured.
+
+4. Streaming without buffering the full response
+   - [ ] When stream=true, forward backend SSE chunks to client as they arrive.
+     Read backend response line-by-line, write each data: ... line immediately,
+     then pass through data: [DONE].
+   - [ ] Do not buffer the full backend response before replaying it.
+   Currently stream_chat returns a Response object (not SSE); route does not use
+   StreamingResponse or yield chunks.
+
+5. Logging and usage after response (and stream) completes
+   - [ ] Capture latency (request start to response/stream end) and log per request
+     with request-id, path, status, and latency in structured format.
+   - [ ] Record usage: if backend returns usage (prompt_tokens, completion_tokens),
+     log or store it for billing/analytics. For streaming, aggregate from final chunk.
+   - [ ] Include request-id in every log line for full lifecycle tracing.
+   - [ ] Emit metrics (request count, latency histogram, tokens) to in-memory store
+     and expose via GET /metrics, or push to a metrics system.
+     Apply to both streaming and non-streaming requests.
+
+6. Full request contract
+   - [x] model (validated via ModelName enum).
+   - [x] messages[] (List[Message] with role + content).
+   - [x] stream (Optional[bool], default False).
+   - [x] max_tokens (Optional[int], ge=1, le=50_000, default 2_000).
+   - [x] temperature (Optional[float], ge=0.0, le=2.0, default 1.0).
+   - [ ] Optionally add `stop` field.
+   - [ ] Forward supported fields to the backend (or normalize them) instead of
+     ignoring them.
+   Currently LlamaCppBackend sends only messages and stream, dropping model/max_tokens/temperature.

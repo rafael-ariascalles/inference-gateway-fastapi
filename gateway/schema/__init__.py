@@ -1,3 +1,3 @@
-from .chat import InputRequest, Message
+from .chat import InputRequest, Message, ModelName
 
-__all__ = ["InputRequest", "Message"]
+__all__ = ["InputRequest", "Message", "ModelName"]

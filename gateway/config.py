@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     backend_url: str = "http://0.0.0.0:8000"
     request_id_header: str = "X-Request-ID"
     port: int = 8000
+    gateway_api_key: str = "2357"
 
 @lru_cache
 def get_settings():

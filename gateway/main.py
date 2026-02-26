@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from gateway.security import verify_token
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from gateway.security import error_verify_token
 from gateway.routes import app_router
 import uuid
 from gateway.config import get_settings
@@ -42,8 +44,20 @@ async def ping():
 
 
 
-app.include_router(app_router,tags=["Chats"])
+app.include_router(app_router,tags=["Chats"],dependencies=[Depends(error_verify_token)])
 
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = [
+        {"field": err["loc"][-1] if err["loc"] else "request", "message": err["msg"]}
+        for err in exc.errors()
+    ]
+    return JSONResponse(
+        status_code=400,
+        content={"detail": {"errors": errors}},
+    )
 
 if __name__ == "__main__":
     import uvicorn
