@@ -1,7 +1,7 @@
 -include .env
 export
 
-.PHONY: build run copy-env
+.PHONY: build run copy-env test
 
 IMAGE_NAME ?= microservice
 TAG ?= latest
@@ -17,3 +17,6 @@ copy-env:
 
 run: build copy-env
 	docker run -it --rm -p $(PORT):$(PORT) --env-file .env --name services $(IMAGE_NAME):$(TAG)
+
+test:
+	uv run pytest test/ -v

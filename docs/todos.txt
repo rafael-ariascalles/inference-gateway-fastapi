@@ -26,6 +26,10 @@ DONE
 - [x] Server port configurable by env (PORT) with default 8000.
   (Settings.port, main.py __main__ block, Dockerfile CMD uses python -m gateway.main, Makefile/env files pass PORT.)
 - [x] `gateway.security` module exists with `verify_token` and `Depends` (imported in main.py for future use).
+- [x] Basic tests added (test/test_gateway.py, 10 tests):
+  - request-id middleware behavior (generated, echoed, present on POST)
+  - /v1/chat/completions non-stream response shape (top-level keys, choices, usage, hex id)
+  - echo fallback path (echo prefix, unknown model fallback, full content)
 
 OPTIONAL / STRETCH
 - [ ] stream=true support with SSE:
@@ -37,7 +41,3 @@ OPTIONAL / STRETCH
 CLEANUP / TECH-DEBT
 - [ ] Confirm env file path strategy (`/gateway/envs/.env`) works in container/runtime.
   (Config hardcodes /gateway/envs/.env but Dockerfile WORKDIR is /app; no .env is copied there. Runtime relies on --env-file flag instead.)
-- [ ] Add basic tests for:
-  - request-id middleware behavior
-  - /v1/chat/completions non-stream response shape
-  - echo fallback path
