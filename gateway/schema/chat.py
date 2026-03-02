@@ -29,7 +29,7 @@ class Usage(BaseModel):
     total_tokens: int = Field(examples=[987])
 
 class Response(BaseModel):
-    choices: list[Choice]
-    object: str = Field(default="chat.completion", examples=["chat.completion"])
-    usage: Usage
     id: str = Field(examples=["1234567890"])
+    backend: str = Field(examples=["local_llama_cpp"])
+    choices: list[Choice]
+    usage: Usage
