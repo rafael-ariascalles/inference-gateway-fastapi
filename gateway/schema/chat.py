@@ -3,7 +3,8 @@ from typing import List, Dict, Union, Optional
 from enum import Enum
 
 class ModelName(str, Enum):
-    llama_cpp = "llama_cpp"
+    local_llama_cpp = "local_llama_cpp"
+    modal_llama_cpp = "modal_llama_cpp"
     echo = "echo"
 
 class Message(BaseModel):

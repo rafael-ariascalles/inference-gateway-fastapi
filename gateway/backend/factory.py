@@ -1,10 +1,11 @@
-from gateway.backend import LlamaCppBackend, EchoBackend, BackendClient
+from gateway.backend import EchoBackend, BackendClient
 from gateway.schema import ModelName
-
+from gateway.backend.llama_cpp import LocalLlamaCppBackendFactory, LlamaCppModalBackend
 
 def get_backend(backend_name: ModelName) -> BackendClient:
     backends = {
-        ModelName.llama_cpp: LlamaCppBackend,
+        ModelName.local_llama_cpp: LocalLlamaCppBackendFactory,
+        ModelName.modal_llama_cpp: LlamaCppModalBackend,
         ModelName.echo: EchoBackend,
     }
     return backends[backend_name]()

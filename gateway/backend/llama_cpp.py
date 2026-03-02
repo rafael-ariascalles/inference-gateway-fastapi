@@ -1,19 +1,20 @@
 import httpx
 from gateway.schema import InputRequest
-from gateway.config import get_settings
 from gateway.backend.generic import BackendClient
+from gateway.config import get_settings
+from loguru import logger
 
 TIMEOUT = 120.0
 
 class LlamaCppBackend(BackendClient):
-    def __init__(self):
-        self.settings = get_settings()
+    def __init__(self, backend_url: str):
+        super().__init__(backend_url=backend_url)
         self.client = httpx.AsyncClient(timeout=TIMEOUT)
 
     async def _chat(self, inputs: InputRequest) -> str:
         prompt = inputs.messages[-1].content
         response = await self.client.post(
-            self.settings.backend_url + "/v1/chat/completions",
+            self.backend_url + "/v1/chat/completions",
             json={
                 "messages": [{"role": "user", "content": prompt}],
                 "stream": False,
@@ -24,3 +25,29 @@ class LlamaCppBackend(BackendClient):
 
     async def _stream_chat(self, inputs: InputRequest) -> str:
         return "Stream: " + inputs.messages[-1].content
+
+class LlamaCppModalBackend(LlamaCppBackend):
+    
+    def __init__(self):
+        super().__init__(backend_url=get_settings().backend_modal_url)
+
+    async def _chat(self, inputs: InputRequest) -> str:
+        prompt = inputs.messages[-1].content
+        response = await self.client.post(
+            self.backend_url + "/completion",
+            json={
+                "prompt": prompt,
+                "stream": False,
+            },
+        )
+        logger.info(response.text)
+        response.raise_for_status()
+        data = response.json()
+        if "content" in data:
+            return data["content"]
+        return data["choices"][0].get("message", {}).get("content") or data["choices"][0].get("text", "")
+
+class LocalLlamaCppBackendFactory(LlamaCppBackend):
+    
+    def __init__(self):
+        super().__init__(backend_url=get_settings().backend_local_url)

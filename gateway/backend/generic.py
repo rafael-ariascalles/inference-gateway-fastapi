@@ -6,6 +6,7 @@ import uuid
 import httpx
 from fastapi import HTTPException
 from gateway.schema import Message
+from loguru import logger
 
 #Response base on LLM response
 class Choice(BaseModel):
@@ -23,7 +24,8 @@ class Response(BaseModel):
     usage: Usage
 
 class BackendClient(ABC):
-    def __init__(self):
+    def __init__(self, backend_url: str):
+        self.backend_url = backend_url
         pass
 
     @abstractmethod
@@ -37,11 +39,14 @@ class BackendClient(ABC):
     async def _call_backend(self, coro):
         try:
             return await coro
-        except httpx.ConnectError:
+        except httpx.ConnectError as e:
+            logger.error(e)
             raise HTTPException(status_code=502, detail={"errors": [{"message": "backend_unavailable"}]})
-        except httpx.TimeoutException:
+        except httpx.TimeoutException as e:
+            logger.error(e)
             raise HTTPException(status_code=504, detail={"errors": [{"message": "gateway_timeout"}]})
-        except httpx.HTTPStatusError:
+        except httpx.HTTPStatusError as e:
+            logger.error(e)
             raise HTTPException(status_code=502, detail={"errors": [{"message": "backend_error"}]})
 
     def _build_response(self, content: str) -> Response:
@@ -63,6 +68,9 @@ class BackendClient(ABC):
 
 
 class EchoBackend(BackendClient):
+    def __init__(self):
+        super().__init__(backend_url="")
+
     async def _chat(self, inputs: InputRequest) -> str:
         return "Echo: " + inputs.messages[-1].content
 

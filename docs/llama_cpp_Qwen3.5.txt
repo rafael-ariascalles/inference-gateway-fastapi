@@ -1,6 +1,6 @@
 llama-server \
-    -m unsloth_Qwen3.5-35B-A3B-GGUF_Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf \
-    --mmproj unsloth_Qwen3.5-35B-A3B-GGUF_mmproj-BF16.gguf \
+    -m ~/models/hf/unsloth/Qwen3.5-35B-A3B-GGUF/unsloth_Qwen3.5-35B-A3B-GGUF_Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf \
+    --mmproj ~/models/hf/unsloth/Qwen3.5-35B-A3B-GGUF/unsloth_Qwen3.5-35B-A3B-GGUF_mmproj-BF16.gguf \
     --ctx-size 16384 \
     --temp 1.0 \
     --top-p 0.95 \
