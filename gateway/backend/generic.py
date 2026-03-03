@@ -68,8 +68,8 @@ class BackendClient(ABC):
 
 
 class EchoBackend(BackendClient):
-    def __init__(self):
-        super().__init__(backend_url="")
+    def __init__(self, backend_url: str = ""):
+        super().__init__(backend_url=backend_url)
 
     async def _chat(self, inputs: GatewayRequest) -> str:
         return "Echo: " + inputs.messages[-1].content

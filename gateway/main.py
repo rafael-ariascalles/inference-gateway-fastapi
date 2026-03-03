@@ -7,7 +7,6 @@ from gateway.routes import app_router
 import uuid
 from gateway.config import get_settings
 
-
 settings = get_settings()
 ROOT_PATH = settings.root_path
 API_TITLE = settings.api_title
