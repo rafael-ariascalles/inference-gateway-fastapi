@@ -1,10 +1,10 @@
-from .chat import GatewayRequest, Message, ModelName, Response
+from .chat import GatewayRequest, Message, Response, ModelType
 from .llama_cpp import LlamaCppResponse
 
 __all__ = [
     "GatewayRequest",
     "Message",
-    "ModelName",
+    "ModelType",
     "LlamaCppResponse",
     "Response",
 ]

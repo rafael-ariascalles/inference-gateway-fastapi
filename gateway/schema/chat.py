@@ -34,3 +34,4 @@ class Response(BaseModel):
     backend: str = Field(examples=["local_llama_cpp"])
     choices: list[Choice]
     usage: Usage
+
