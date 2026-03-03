@@ -6,8 +6,6 @@ from gateway.security import error_verify_token
 from gateway.routes import app_router
 import uuid
 from gateway.config import get_settings
-from gateway.config import ModelRegistry
-from contextlib import asynccontextmanager
 
 settings = get_settings()
 ROOT_PATH = settings.root_path
@@ -34,11 +32,6 @@ async def request_id_middleware(request: Request, call_next):
     response = await call_next(request)
     response.headers[REQUEST_ID_HEADER] = request_id
     return response
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    app.state.model_registry = ModelRegistry(config_path="models.yaml")
-    yield
 
 @app.get("/healthz", tags=["Checks"])
 async def healthz():

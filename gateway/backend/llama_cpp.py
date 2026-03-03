@@ -1,7 +1,6 @@
 import httpx
 from gateway.schema import GatewayRequest
 from gateway.backend.generic import BackendClient
-from gateway.config import get_settings
 from loguru import logger
 
 TIMEOUT = 120.0

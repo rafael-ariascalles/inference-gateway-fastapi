@@ -1,6 +1,6 @@
 from .generic import EchoBackend, BackendClient, Response
-from .llama_cpp import LlamaCppBackend
-from .factory import get_backend
+from .llama_cpp import LlamaCppBackend, LlamaCppLocalBackend, LlamaCppModalBackend
+from .factory import get_backend, list_models
 
 __all__ = [
     "LlamaCppBackend",
@@ -8,6 +8,7 @@ __all__ = [
     "LlamaCppModalBackend",
     "EchoBackend",
     "BackendClient",
-    "get_backend",
     "Response",
+    "get_backend",
+    "list_models",
 ]
