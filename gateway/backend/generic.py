@@ -1,4 +1,4 @@
-from gateway.schema import InputRequest
+from gateway.schema import GatewayRequest
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from typing import List
@@ -29,11 +29,11 @@ class BackendClient(ABC):
         pass
 
     @abstractmethod
-    async def _chat(self, inputs: InputRequest) -> str:
+    async def _chat(self, inputs: GatewayRequest) -> str:
         pass
 
     @abstractmethod
-    async def _stream_chat(self, inputs: InputRequest) -> str:
+    async def _stream_chat(self, inputs: GatewayRequest) -> str:
         pass
 
     async def _call_backend(self, coro):
@@ -58,11 +58,11 @@ class BackendClient(ABC):
             ],
             usage=Usage(prompt_tokens=0, completion_tokens=0, total_tokens=0))
 
-    async def chat(self, inputs: InputRequest) -> Response:
+    async def chat(self, inputs: GatewayRequest) -> Response:
         response = await self._call_backend(self._chat(inputs))
         return self._build_response(response)
 
-    async def stream_chat(self, inputs: InputRequest) -> Response:
+    async def stream_chat(self, inputs: GatewayRequest) -> Response:
         response = await self._call_backend(self._stream_chat(inputs))
         return self._build_response(response)
 
@@ -71,8 +71,8 @@ class EchoBackend(BackendClient):
     def __init__(self):
         super().__init__(backend_url="")
 
-    async def _chat(self, inputs: InputRequest) -> str:
+    async def _chat(self, inputs: GatewayRequest) -> str:
         return "Echo: " + inputs.messages[-1].content
 
-    async def _stream_chat(self, inputs: InputRequest) -> str:
+    async def _stream_chat(self, inputs: GatewayRequest) -> str:
         return "Echo: " + inputs.messages[-1].content

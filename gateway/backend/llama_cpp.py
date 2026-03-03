@@ -1,5 +1,5 @@
 import httpx
-from gateway.schema import InputRequest
+from gateway.schema import GatewayRequest
 from gateway.backend.generic import BackendClient
 from gateway.config import get_settings
 from loguru import logger
@@ -11,7 +11,7 @@ class LlamaCppBackend(BackendClient):
         super().__init__(backend_url=backend_url)
         self.client = httpx.AsyncClient(timeout=TIMEOUT)
 
-    async def _chat(self, inputs: InputRequest) -> str:
+    async def _chat(self, inputs: GatewayRequest) -> str:
         prompt = inputs.messages[-1].content
         response = await self.client.post(
             self.backend_url + "/v1/chat/completions",
@@ -23,7 +23,7 @@ class LlamaCppBackend(BackendClient):
         response.raise_for_status()
         return response.json()["choices"][0]["message"]["content"]
 
-    async def _stream_chat(self, inputs: InputRequest) -> str:
+    async def _stream_chat(self, inputs: GatewayRequest) -> str:
         return "Stream: " + inputs.messages[-1].content
 
 class LlamaCppModalBackend(LlamaCppBackend):
@@ -31,7 +31,7 @@ class LlamaCppModalBackend(LlamaCppBackend):
     def __init__(self):
         super().__init__(backend_url=get_settings().backend_modal_url)
 
-    async def _chat(self, inputs: InputRequest) -> str:
+    async def _chat(self, inputs: GatewayRequest) -> str:
         prompt = inputs.messages[-1].content
         response = await self.client.post(
             self.backend_url + "/completion",

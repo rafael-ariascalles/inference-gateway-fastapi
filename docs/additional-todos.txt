@@ -4,8 +4,8 @@ Additional TODOs
    - [x] Add custom exception handler for RequestValidationError in main.py.
      Returns 400 with {"detail": {"errors": [{"field": "<name>", "message": "<msg>"}]}}.
      Surfaces all validation errors, not just the first.
-   - [x] Make `stream` optional with default False in InputRequest schema.
-   - [x] Add `max_tokens` field to InputRequest with range validation (ge=1, le=50_000).
+   - [x] Make `stream` optional with default False in GatewayRequest schema.
+   - [x] Add `max_tokens` field to GatewayRequest with range validation (ge=1, le=50_000).
    - [x] Numeric constraints use ge/le correctly (max_tokens and temperature).
    - [x] Model name validated via ModelName enum (rejects unknown models at schema level).
 
