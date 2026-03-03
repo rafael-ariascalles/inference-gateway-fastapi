@@ -9,7 +9,7 @@ MODELS_CONFIG_PATH = "config/models.yaml"
 
 def _load_models(path: str = MODELS_CONFIG_PATH, adapter_registry: dict[str, Type[BackendClient]] = None) -> dict[str, ModelConfig]:
     if adapter_registry is None:
-        raise ValueError("Adapter registry is required")
+        raise TypeError("Adapter registry is required")
 
     config_file = Path(path)
     if not config_file.exists():
