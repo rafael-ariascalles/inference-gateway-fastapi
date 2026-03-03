@@ -3,7 +3,7 @@ models:
     url: "http://host.docker.internal:8082"
     type: llama_cpp
     priority: 10
-  - name: qwen3_5_9b
+  - name: qwen3_5_9b_low_cost
     url: "https://rafael-ariascalles--relay-llama-server-web.modal.run"
     type: modal_llama_cpp
     priority: 100
@@ -11,9 +11,9 @@ models:
     url: "https://rafael-ariascalles--relay-llama-server-gemma-web.modal.run"
     type: modal_llama_cpp
     priority: 80
-  - name: qwen3_5_9b
+  - name: qwen3_5_9b_low_latency
     url: "https://rafael-ariascalles--relay-llama-server-vllm-web.modal.run"
-    type: vllm
+    type: modal_vllm
     priority: 50
   - name: echo
     url: ""
